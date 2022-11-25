@@ -19,27 +19,25 @@ function main(word1, word2) {
             } else {
                 cache[key] = [word1, word2]
             }
-            console.log(cache)
         }
         else {
-            console.log('The words are not anagrams...')
+            console.log('The words are not anagrams')
         }        
-    }    
+    } else {
+        console.log('A word is invalid')
+    }
 }
 
 function checkForAnagram(string1, string2) {
-    /*First, we remove any non-alphabet character using regex and convert
-    convert the strings to lowercase. */
+    // trim whitespaces and convert words to lowercase
     string1 = string1.trim().toLowerCase()
     string2 = string2.trim().toLowerCase()
 
-    //Get the character map of both strings
+    // get the character map of both strings
     const charMapA = getCharMap(string1)
     const charMapB = getCharMap(string2)
 
-    /* Next, we loop through each character in the charMapA, 
-    and check if it exists in charMapB and has the same value as
-    in charMapA. If it does not, return false */
+    // check that each char in charMapA exists in charMapB and that it has the same value
     for (let char in charMapA) {
         if (charMapA[char] !== charMapB[char]) {
             return false
@@ -52,9 +50,7 @@ function checkForAnagram(string1, string2) {
 function getCharMap(string) {
     let charMap = {}
 
-    /*We loop through each character in the string. if the character 
-    already exists in the map, increase the value, otherwise add it 
-    to the map with a value of 1 */
+    // add new characters to charMap and increase its value by 1 for each subsequent occurence
     for (let char of string) {
         charMap[char] = charMap[char] + 1 || 1
     }
@@ -62,9 +58,7 @@ function getCharMap(string) {
 }
 
 function createKey(word1) {
-    const sortedArray = word1.split('').sort()
-    const sortedString = sortedArray.join('')
-    return sortedString
+    return word1.split('').sort().join('')
 }
 
 function checkWordIsValid(word) {
