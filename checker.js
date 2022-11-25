@@ -1,6 +1,6 @@
 let username = '';
 let word1 = 'listen';
-let word2 = 'sile nt';
+let word2 = 'silent';
 let cache = {}
 
 function main(word1, word2) {
@@ -68,11 +68,7 @@ function createKey(word1) {
 }
 
 function checkWordIsValid(word) {
-    if (/^[a-z]+$/.test(word)) {
-        console.log('yes')
-    } else {
-        console.log('no')
-    }
+    return /^[a-z]+$/.test(word)
 }
 
 main(word1, word2);
