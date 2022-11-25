@@ -1,32 +1,37 @@
 let username = '';
 let word1 = 'listen';
-let word2 = 'silent';
+let word2 = 'sile nt';
 let cache = {}
 
 function main(word1, word2) {
-    const isAnagram = checkForAnagram(word1, word2)
+    const isWord1Valid = checkWordIsValid(word1)
+    const isWord2Valid = checkWordIsValid(word2)
 
-    if (isAnagram) {
-        const key = createKey(word1)
-        const wordArray = [word1, word2] 
+    if (isWord1Valid && isWord2Valid) {
+        const isAnagram = checkForAnagram(word1, word2)
 
-        if (key in cache) {
-            cache[key] = [...cache[key], ...wordArray]
-        } else {
-            cache[key] = [word1, word2]
+        if (isAnagram) {
+            const key = createKey(word1)
+            const wordArray = [word1, word2] 
+    
+            if (key in cache) {
+                cache[key] = [...cache[key], ...wordArray]
+            } else {
+                cache[key] = [word1, word2]
+            }
+            console.log(cache)
         }
-        console.log(cache)
-    }
-    else {
-        console.log('The words are not anagrams...')
-    }
+        else {
+            console.log('The words are not anagrams...')
+        }        
+    }    
 }
 
 function checkForAnagram(string1, string2) {
     /*First, we remove any non-alphabet character using regex and convert
     convert the strings to lowercase. */
-    string1 = string1.replace(/[^\w]/g, "").toLowerCase()
-    string2 = string2.replace(/[^\w]/g, "").toLowerCase()
+    string1 = string1.trim().toLowerCase()
+    string2 = string2.trim().toLowerCase()
 
     //Get the character map of both strings
     const charMapA = getCharMap(string1)
@@ -60,6 +65,14 @@ function createKey(word1) {
     const sortedArray = word1.split('').sort()
     const sortedString = sortedArray.join('')
     return sortedString
+}
+
+function checkWordIsValid(word) {
+    if (/^[a-z]+$/.test(word)) {
+        console.log('yes')
+    } else {
+        console.log('no')
+    }
 }
 
 main(word1, word2);
