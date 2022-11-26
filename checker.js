@@ -1,7 +1,36 @@
-let username = '';
-let word1 = 'prasied';
-let word2 = 'despair';
-let cache = {}
+cache= {}
+
+const readline = require('readline').createInterface({
+    input: process.stdin,
+    output: process.stdout,
+  });
+
+function getUsername() {
+    return new Promise((resolve, reject) => {
+        readline.question(`Username: `, answer => resolve(answer))
+    })
+}
+
+function getWord1() {
+    return new Promise((resolve, reject) => {
+        readline.question(`Word 1: `, answer => resolve(answer))
+    })   
+}
+
+function getWord2() {
+    return new Promise((resolve, reject) => {
+        readline.question(`Word 2: `, answer => resolve(answer))
+    })    
+}
+
+async function start() {
+    const username = await getUsername()
+    const word1 = await getWord1()
+    const word2 = await getWord2()
+
+    readline.close();
+    main(word1, word2)
+}
 
 function main(word1, word2) {
     const isWord1Valid = checkWordIsValid(word1)
@@ -89,4 +118,4 @@ function checkForWord(wordArray, word) {
     return wordArray.includes(word)
 }
 
-main(word1, word2);
+start()
