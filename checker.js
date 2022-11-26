@@ -23,13 +23,28 @@ function getWord2() {
     })    
 }
 
+function getShouldContinue() {
+    return new Promise((resolve, reject) => {
+        readline.question(`Want to continue? (y for yes): `, answer => resolve(answer.toLowerCase()))
+    })    
+}
+
 async function start() {
+    let shouldContinue = 'y'
     const username = await getUsername()
-    const word1 = await getWord1()
-    const word2 = await getWord2()
+
+    while (shouldContinue === 'y') {
+        const word1 = await getWord1()
+        const word2 = await getWord2()
+    
+        const anagrams = main(word1, word2)
+        const userCache = {username, anagrams}
+        console.log(userCache)
+        
+        shouldContinue = await getShouldContinue()
+    }
 
     readline.close();
-    main(word1, word2)
 }
 
 function main(word1, word2) {
@@ -52,7 +67,7 @@ function main(word1, word2) {
                 // both exist
                 if (word1Exists && word2Exists) {
                     console.log('Both words already have been checked previously')
-                    return
+                    return cache
                 }
                 else if (word1Exists) {
                     cache[key] = [...cache[key], word2]
@@ -70,11 +85,13 @@ function main(word1, word2) {
         }
         else {
             console.log('The words are not anagrams')
+            return cache
         }        
     } else {
-        console.log('A word is invalid')
+        console.log('A word is invalid (No numbers, spaces or special characters')
+        return cache
     }
-    console.log(cache)
+    return cache
 }
 
 function checkForAnagram(string1, string2) {
