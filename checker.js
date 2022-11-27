@@ -118,6 +118,7 @@ function main(word1, word2, userCache) {
         console.log('A word is invalid (No numbers, spaces or special characters')
         return userCache
     }
+    return userCache
 }
 
 function checkForAnagram(word1, word2) {
