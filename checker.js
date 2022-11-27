@@ -5,28 +5,10 @@ const readline = require('readline').createInterface({
     output: process.stdout,
 });
 
-function getUsername() {
+function askQuestion(questionString) {
     return new Promise((resolve, reject) => {
-        readline.question(`Username: `, answer => resolve(answer))
+        readline.question(questionString, answer => resolve(answer.trim().toLowerCase()))
     })
-}
-
-function getWord1() {
-    return new Promise((resolve, reject) => {
-        readline.question(`Word 1: `, answer => resolve(answer.trim().toLowerCase()))
-    })   
-}
-
-function getWord2() {
-    return new Promise((resolve, reject) => {
-        readline.question(`Word 2: `, answer => resolve(answer.trim().toLowerCase()))
-    })    
-}
-
-function getShouldContinue() {
-    return new Promise((resolve, reject) => {
-        readline.question(`Want to continue? (y for yes): `, answer => resolve(answer.trim().toLowerCase()))
-    })    
 }
 
 function writeDataToFile(data) {
@@ -34,21 +16,21 @@ function writeDataToFile(data) {
         if (err) {
             console.error(err);
         }
-        console.log('Written to file')
+        console.log('Wrote to file')
         });
 }
 
 async function start() {
     const data = JSON.parse(fs.readFileSync('./externalStorage.json'));
-    const username = await getUsername()
+    const username = await askQuestion('Username: ')
     let userCache = {username, anagrams: {}}
     let shouldContinue = 'y'
     let i = 0
     let newUserCache = {}
 
     while (shouldContinue === 'y') {
-        const word1 = await getWord1()
-        const word2 = await getWord2()
+        const word1 = await askQuestion('Word 1: ')
+        const word2 = await askQuestion('Word 2: ')
 
         const isWord1Valid = checkWordIsValid(word1)
         const isWord2Valid = checkWordIsValid(word2)
@@ -64,28 +46,27 @@ async function start() {
                     break
                 }
             }
-            newUserCache = main(word1, word2, userCache)
+            newUserCache = createCache(word1, word2, userCache)
         } else {
             console.log('A word is invalid (No numbers, spaces or special characters')
         }
 
-        shouldContinue = await getShouldContinue()
+        shouldContinue = await askQuestion('Want to continue? (y for yes): ')
     }
 
     if (data.length === 0) { // data is empty
         data.push(newUserCache)
-        writeDataToFile(data)
     } else if (newUserCache.anagrams) { // add newUserCache to previous position
         data.splice(i, 1, newUserCache);
-        writeDataToFile(data)
     } else {
         console.log('No new data added')
     }
 
+    writeDataToFile(data)
     readline.close();
 }
 
-function main(word1, word2, userCache) {
+function createCache(word1, word2, userCache) {
         const isAnagram = checkForAnagram(word1, word2)
 
         if (isAnagram) {
