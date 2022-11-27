@@ -3,7 +3,7 @@ const fs = require('fs');
 const readline = require('readline').createInterface({
     input: process.stdin,
     output: process.stdout,
-  });
+});
 
 function getUsername() {
     return new Promise((resolve, reject) => {
@@ -25,7 +25,7 @@ function getWord2() {
 
 function getShouldContinue() {
     return new Promise((resolve, reject) => {
-        readline.question(`Want to continue? (y for yes): `, answer => resolve(answer.toLowerCase()))
+        readline.question(`Want to continue? (y for yes): `, answer => resolve(answer.trim().toLowerCase()))
     })    
 }
 
@@ -39,13 +39,12 @@ function writeDataToFile(data) {
 }
 
 async function start() {
-    let shouldContinue = 'y'
-    const rawData = fs.readFileSync('./externalStorage.json');
-    const data = JSON.parse(rawData);
-    let i = 0
-    let newUserCache = {}
+    const data = JSON.parse(fs.readFileSync('./externalStorage.json'));
     const username = await getUsername()
     let userCache = {username, anagrams: {}}
+    let shouldContinue = 'y'
+    let i = 0
+    let newUserCache = {}
 
     while (shouldContinue === 'y') {
         const word1 = await getWord1()
@@ -53,8 +52,7 @@ async function start() {
 
         // check for user
         for (entry of data) {
-            // user does not exist
-            if (entry.username !== username) {
+            if (entry.username !== username) { // user does not exist
                 i++
                 continue
             } else { // user exists
@@ -67,9 +65,9 @@ async function start() {
         shouldContinue = await getShouldContinue()
     }
 
-    if (data.length === 0) {
+    if (data.length === 0) { // data is empty
         data.push(newUserCache)
-    } else {
+    } else { // add newUserCache to previous position
         data.splice(i, 1, newUserCache);
     }
 
@@ -95,21 +93,16 @@ function main(word1, word2, userCache) {
                 const word1Exists = checkForWord(anagrams[key], word1);
                 const word2Exists = checkForWord(anagrams[key], word2);
 
-                // both exist
-                if (word1Exists && word2Exists) {
+                if (word1Exists && word2Exists) { // both exist
                     console.log('Both words already have been checked previously')
                     return userCache
-                }
-                else if (word1Exists) {
+                } else if (word1Exists) {
                     console.log(`Added new word: ${word2}`)
                     anagrams[key] = [...anagrams[key], word2]
-                }
-                else if (word2Exists) {
+                } else if (word2Exists) {
                     console.log(`Added new word: ${word1}`)
                     anagrams[key] = [...anagrams[key], word1]
-                }
-                // neither exist
-                else {
+                } else { //neither exist
                     console.log(`Added new words: ${word1}, ${word2},`)
                     anagrams[key] = [...anagrams[key], ...wordArray]
                 }
@@ -117,8 +110,7 @@ function main(word1, word2, userCache) {
                 console.log(`Added new words: ${word1}, ${word2},`)
                 anagrams[key] = [word1, word2]
             }
-        }
-        else {
+        } else {
             console.log('The words are not anagrams')
             return userCache
         }        
@@ -126,17 +118,16 @@ function main(word1, word2, userCache) {
         console.log('A word is invalid (No numbers, spaces or special characters')
         return userCache
     }
-    return userCache
 }
 
-function checkForAnagram(string1, string2) {
+function checkForAnagram(word1, word2) {
     // get the character map of both strings
-    const charMapA = getCharMap(string1)
-    const charMapB = getCharMap(string2)
+    const charMap1 = getCharMap(word1)
+    const charMap2 = getCharMap(word2)
 
-    // check that each char in charMapA exists in charMapB and that it has the same value
-    for (let char in charMapA) {
-        if (charMapA[char] !== charMapB[char]) {
+    // check that each char in charMap1 exists in charMap2 and that it has the same value
+    for (let char in charMap1) {
+        if (charMap1[char] !== charMap2[char]) {
             return false
         }
     }
@@ -144,11 +135,11 @@ function checkForAnagram(string1, string2) {
     return true
 }
 
-function getCharMap(string) {
+function getCharMap(word) {
     let charMap = {}
 
     // add new characters to charMap and increase its value by 1 for each subsequent occurence
-    for (let char of string) {
+    for (let char of word) {
         charMap[char] = charMap[char] + 1 || 1
     }
     return charMap
@@ -162,8 +153,8 @@ function checkWordIsValid(word) {
     return /^[a-zA-Z]+$/.test(word)
 }
 
-function checkForWord(wordArray, word) {
-    return wordArray.includes(word)
+function checkForWord(anagramArray, word) {
+    return anagramArray.includes(word)
 }
 
 start()
