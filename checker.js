@@ -142,3 +142,5 @@ function checkForWord(anagramArray, word) {
 }
 
 start()
+
+module.exports = {createCache, checkWordIsValid}

@@ -1,0 +1,14 @@
+{
+  "name": "anagram-checker",
+  "version": "1.0.0",
+  "description": "a NodeJS program for checking if words are anagrams",
+  "main": "checker.js",
+  "scripts": {
+    "test": "jest --detectOpenHandles && exit 1"
+  },
+  "author": "Darragh Madden",
+  "license": "ISC",
+  "dependencies": {
+    "jest": "^29.3.1"
+  }
+}
