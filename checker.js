@@ -50,36 +50,42 @@ async function start() {
         const word1 = await getWord1()
         const word2 = await getWord2()
 
-        // check for user
-        for (entry of data) {
-            if (entry.username !== username) { // user does not exist
-                i++
-                continue
-            } else { // user exists
-                userCache = entry
-                break
+        const isWord1Valid = checkWordIsValid(word1)
+        const isWord2Valid = checkWordIsValid(word2)
+        
+        if ((isWord1Valid && isWord2Valid)) {
+            // check for user
+            for (entry of data) {
+                if (entry.username !== username) { // user does not exist
+                    i++
+                    continue
+                } else { // user exists
+                    userCache = entry
+                    break
+                }
             }
+            newUserCache = main(word1, word2, userCache)
+        } else {
+            console.log('A word is invalid (No numbers, spaces or special characters')
         }
 
-        newUserCache = main(word1, word2, userCache)
         shouldContinue = await getShouldContinue()
     }
 
     if (data.length === 0) { // data is empty
         data.push(newUserCache)
-    } else { // add newUserCache to previous position
+        writeDataToFile(data)
+    } else if (newUserCache.anagrams) { // add newUserCache to previous position
         data.splice(i, 1, newUserCache);
+        writeDataToFile(data)
+    } else {
+        console.log('No new data added')
     }
 
-    writeDataToFile(data)
     readline.close();
 }
 
 function main(word1, word2, userCache) {
-    const isWord1Valid = checkWordIsValid(word1)
-    const isWord2Valid = checkWordIsValid(word2)
-
-    if ((isWord1Valid && isWord2Valid)) {
         const isAnagram = checkForAnagram(word1, word2)
 
         if (isAnagram) {
@@ -113,11 +119,7 @@ function main(word1, word2, userCache) {
         } else {
             console.log('The words are not anagrams')
             return userCache
-        }        
-    } else {
-        console.log('A word is invalid (No numbers, spaces or special characters')
-        return userCache
-    }
+        }
     return userCache
 }
 
